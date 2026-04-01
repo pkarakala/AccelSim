@@ -25,51 +25,51 @@ Understanding accelerator performance is critical for:
 
 AccelSim provides a simple yet realistic model for these analyses.
 
-## Architecture
+## System Architecture
 
 AccelSim implements a complete end-to-end pipeline:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                      User Program                          │
-│            (PyTorch model, TensorFlow graph, etc.)         │
+│                      User Program                           │
+│            (PyTorch model, TensorFlow graph, etc.)          │
 └──────────────────────┬──────────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│                    Tensor IR Layer                         │
-│         (High-level operation representation)              │
-│    TensorOp(LINEAR, RELU, ADD, MATMUL, ...)               │
+│                    Tensor IR Layer                          │
+│         (High-level operation representation)               │
+│    TensorOp(LINEAR, RELU, ADD, MATMUL, ...)                 │
 └──────────────────────┬──────────────────────────────────────┘
                        │ ir/tensor_ir.py
 ┌──────────────────────▼──────────────────────────────────────┐
-│                 Code Generation                            │
-│         (IR → Accelerator Instructions)                    │
-│    LOAD, MATMUL, ADD, RELU, STORE                          │
+│                 Code Generation                             │
+│         (IR → Accelerator Instructions)                     │
+│    LOAD, MATMUL, ADD, RELU, STORE                           │
 └──────────────────────┬──────────────────────────────────────┘
                        │ backend/codegen.py
 ┌──────────────────────▼──────────────────────────────────────┐
-│              Accelerator Runtime                           │
-│  ┌──────────────────┬──────────────────────────────────┐  │
-│  │   Scheduler      │      Memory System              │  │
-│  │ (Latency model)  │ (Buffer capacity, traffic)     │  │
-│  └──────────────────┴──────────────────────────────────┘  │
-│         runtime/scheduler.py + runtime/memory_system.py   │
+│              Accelerator Runtime                            │
+│  ┌──────────────────┬──────────────────────────────────┐    │
+│  │   Scheduler      │      Memory System               │    │
+│  │ (Latency model)  │ (Buffer capacity, traffic)       │    │
+│  └──────────────────┴──────────────────────────────────┘    │
+│         runtime/scheduler.py + runtime/memory_system.py     │
 └──────────────────────┬──────────────────────────────────────┘
                        │ runtime/simulator.py
 ┌──────────────────────▼──────────────────────────────────────┐
-│              Performance Analysis                          │
-│  ┌──────────────────┬──────────────────────────────────┐  │
-│  │ Metrics          │ Bottleneck Detection             │  │
-│  │ (cycles, memory) │ (compute/memory bound, buffer)  │  │
-│  └──────────────────┴──────────────────────────────────┘  │
-│  analysis/performance_analyzer.py + bottleneck_detector.py │
+│              Performance Analysis                           │
+│  ┌──────────────────┬──────────────────────────────────┐    │
+│  │ Metrics          │ Bottleneck Detection             │    │
+│  │ (cycles, memory) │ (compute/memory bound, buffer)   │    │
+│  └──────────────────┴──────────────────────────────────┘    │
+│  analysis/performance_analyzer.py + bottleneck_detector.py  │
 └──────────────────────┬──────────────────────────────────────┘
                        │
 ┌──────────────────────▼──────────────────────────────────────┐
-│                  Visualization                             │
-│     (Timeline plots, memory usage graphs)                  │
-│   visualization/timeline_plot.py + memory_plot.py          │
-└──────────────────────────────────────────────────────────────┘
+│                  Visualization                              │
+│     (Timeline plots, memory usage graphs)                   │
+│   visualization/timeline_plot.py + memory_plot.py           │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ## Key Features
